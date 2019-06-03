@@ -32,7 +32,7 @@ A collection of links:
 
 - [my GitHub page](https://github.com/katrienantonio) 
 
-- an [e-book](https://katrienantonio.github.io/intro-R-book/) with more documtation.
+- an [e-book](https://katrienantonio.github.io/intro-R-book/) with more documentation.
 
 Research team is [here](https://katrienantonio.github.io/lab/lab-members/). 
 
@@ -484,9 +484,9 @@ summary(mtcars$cyl)   # use $ to extract variable from a data frame
 Now inspect a tibble
 
 ```{r comment = '', eval = FALSE}
-diamond
-str(diamond)  # built-in in library ggplot2
-head(diamond)
+diamonds
+str(diamonds)  # built-in in library ggplot2
+head(diamonds)
 ```
 
 Can you list some differences?
@@ -1642,4 +1642,11 @@ class: center, middle
 
 Slides created via the R package [**xaringan**](https://github.com/yihui/xaringan).
 
-
+```{r, eval=FALSE, include=FALSE}
+# this code can be used to extract the R code from an R Markdown (Rmd) document
+library(knitr)
+path <- "C:/Users/u0043788/Dropbox/R tutorial/Basic R"
+setwd(path)
+file.exists("basic_R_workshop_NN.Rmd")
+purl("basic_R_workshop_NN.Rmd")
+```

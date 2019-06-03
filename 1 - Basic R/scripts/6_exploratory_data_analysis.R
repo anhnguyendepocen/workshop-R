@@ -16,7 +16,7 @@ lines(density(log(CPS1985$wage)), col = "red")
 summary(CPS1985$occupation)
 
 ## ----comment = ''--------------------------------------------------------
-levels(CPS1985$occupation)[c(2, 6)] <- c("techn", "mgmt")
+levels(CPS1985$occupation)[c(5, 1)] <- c("techn", "mgmt")
 summary(CPS1985$occupation)
 
 ## ----eval=FALSE----------------------------------------------------------

@@ -5,7 +5,8 @@ getwd()
 path <- file.path("C:/Users/u0043788/Dropbox/R tutorial/Basic R")
 
 ## ----eval=FALSE----------------------------------------------------------
-path <- file.path("./data/swimming_pools.csv")
+setwd("C:/Users/u0043788/Dropbox/R tutorial/Basic R")
+path <- file.path("./data")
 
 ## ----eval=FALSE----------------------------------------------------------
 path.hotdogs <- file.path(path, "hotdogs.txt")

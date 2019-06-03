@@ -36,7 +36,7 @@ ggplot(mpg) + geom_point(aes(x = displ, y = hwy, color = class))
 ggplot(mpg) + geom_point(aes(x = displ, y = hwy, color = "blue"))
 
 ## ----eval=FALSE----------------------------------------------------------
-ggplot(mpg) + geom_point(aes(x = displ, y = hwy), color = "blue")
+ggplot(mpg) + geom_point(aes(x = displ, y = hwy), color = "blue") + theme_bw()
 
 ## ----eval=FALSE----------------------------------------------------------
 ggplot(mpg) + geom_point(mapping = aes(x = class, y = hwy))

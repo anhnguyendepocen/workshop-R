@@ -35,9 +35,9 @@ head(mtcars)
 summary(mtcars$cyl)   # use $ to extract variable from a data frame
 
 ## ----comment = '', eval = FALSE------------------------------------------
-diamond
-str(diamond)  # built-in in library ggplot2
-head(diamond)
+diamonds
+str(diamonds)  # built-in in library ggplot2
+head(diamonds)
 
 ## ----comment = ''--------------------------------------------------------
 my_list <- list(one = 1, two = c(1, 2), five = seq(1, 4, length=5),

@@ -35,7 +35,7 @@ A collection of links:
 
 - [my GitHub page](https://github.com/katrienantonio) 
 
-- an [e-book](https://katrienantonio.github.io/intro-R-book/) with more documtation.
+- an [e-book](https://katrienantonio.github.io/intro-R-book/) with more documentation.
 
 Research team is [here](https://katrienantonio.github.io/lab/lab-members/). 
 
@@ -569,9 +569,9 @@ Now inspect a tibble
 
 
 ```r
-diamond
-str(diamond)  # built-in in library ggplot2
-head(diamond)
+diamonds
+str(diamonds)  # built-in in library ggplot2
+head(diamonds)
 ```
 
 Can you list some differences?
@@ -955,7 +955,7 @@ hist(log(CPS1985$wage), freq = FALSE, nclass = 20, col = "light blue")
 lines(density(log(CPS1985$wage)), col = "red")
 ```
 
-&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-37-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-26-1.png" width="45%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -1053,7 +1053,7 @@ Do a mosaic plot
 plot(gender ~ occupation, data = CPS1985)
 ```
 
-&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-42-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-31-1.png" width="45%" style="display: block; margin: auto;" /&gt;
 
 
 ---
@@ -1099,7 +1099,7 @@ Visualize the distribution of `wage` per `gender`
 boxplot(log(wage) ~ gender, data = CPS1985)
 ```
 
-&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-46-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-35-1.png" width="45%" style="display: block; margin: auto;" /&gt;
 ---
 
 Now try with
@@ -1109,7 +1109,7 @@ Now try with
 boxplot(log(wage) ~ gender + occupation, data = CPS1985)
 ```
 
-&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-47-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-36-1.png" width="75%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -1158,7 +1158,7 @@ curve(dnorm, from = -5, to = 5, col = "red", lwd = 3,
       main = "Density of the standard normal distribution")
 ```
 
-&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-50-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-39-1.png" width="45%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -1221,7 +1221,7 @@ library(ggplot2)
 ggplot(data = mpg) + geom_point(mapping = aes(x = displ, y = hwy))
 ```
 
-&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-52-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-41-1.png" width="50%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -1232,7 +1232,7 @@ ggplot(data = mpg) + geom_point(mapping = aes(x = displ, y = hwy))
 ggplot(data = mpg) + geom_point(aes(x = displ, y = hwy, color = class))
 ```
 
-&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-53-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-42-1.png" width="60%" style="display: block; margin: auto;" /&gt;
 ---
 
 # Plots with ggplot2
@@ -1326,7 +1326,7 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
   geom_smooth() + theme_bw()       # adjust theme 
 ```
 
-&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-62-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-51-1.png" width="45%" style="display: block; margin: auto;" /&gt;
 
 
 ---
@@ -1342,7 +1342,7 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
   geom_smooth() + theme_bw()
 ```
 
-&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-63-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-52-1.png" width="45%" style="display: block; margin: auto;" /&gt;
 
 
 ---
@@ -1359,7 +1359,7 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
   geom_smooth(data = filter(mpg, drv == "f")) + theme_bw()
 ```
 
-&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-64-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-53-1.png" width="45%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -1383,7 +1383,7 @@ plot(danish$Date, danish$Loss.in.DKM, type = "l", xlab = "Date", ylab = "Loss",
      main = "Fire insurance data")
 ```
 
-&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-65-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-54-1.png" width="45%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -1398,7 +1398,7 @@ ggplot(danish, aes(x = Date, y = Loss.in.DKM)) +
   labs(title = "Fire insurance data", x = "Date", y = "Loss") 
 ```
 
-&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-66-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-55-1.png" width="45%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -1431,7 +1431,7 @@ plot(price ~  income, data = car_price)
 lines(lowess(car_price$income, car_price$price), col = "blue")
 ```
 
-&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-68-1.png" width="35%" style="display: block; margin: auto;" /&gt;
+&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-57-1.png" width="35%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -1451,7 +1451,7 @@ ggplot(car_price, aes(x = income, y = price)) +
 `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 ```
 
-&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-69-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+&lt;img src="basic_R_workshop_NN_files/figure-html/unnamed-chunk-58-1.png" width="45%" style="display: block; margin: auto;" /&gt;
 
 ---
 

@@ -1,5 +1,5 @@
 ## ----install_ggplot, eval=FALSE, tidy=FALSE------------------------------
-## install.packages("ggplot2")
+install.packages("ggplot2")
 
 
 ## ----load_ggplot, eval=FALSE, tidy=FALSE---------------------------------
