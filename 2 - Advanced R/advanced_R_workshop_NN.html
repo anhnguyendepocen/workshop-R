@@ -1,0 +1,2338 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Advanced R programming</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Katrien Antonio and Jonas Crevecoeur" />
+    <meta name="date" content="2019-06-05" />
+    <link rel="stylesheet" href="pink-theme.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Advanced R programming
+### Katrien Antonio and Jonas Crevecoeur
+### KU Leuven and UvA
+### 2019-06-05
+
+---
+
+
+
+
+.title[
+  Practical information
+]
+
+Course material including
+
+- R scripts, data, lecture sheets 
+
+- a collection of **cheat sheets** 
+
+are available from
+
+&lt;br&gt;
+
+&lt;center&gt;
+&lt;font size="5"&gt;
+&lt;a href="https://github.com/katrienantonio/workshop-R"target="_blank"&gt;https://github.com/katrienantonio/workshop-R&lt;/a&gt;
+&lt;/font&gt;
+&lt;/center&gt;
+
+---
+
+.title[
+  Learning outcomes
+]
+
+Today you will work on:
+
+- Data structures 
+  - Data sets (&lt;span style="color:#e0144e;"&gt;dplyr&lt;/span&gt;)
+  - Factor variables 
+  - Date management (&lt;span style="color:#e0144e;"&gt;lubridate&lt;/span&gt;)
+
+- Functional programming (&lt;span style="color:#e0144e;"&gt;purrr&lt;/span&gt;)
+
+- Efficient programming
+  - Debugging
+  - Benchmarking
+  - RProject
+
+You will cover examples of code and work on **R challenges**.
+
+---
+.title[
+Follow-up R basics workshop
+]
+
+Today we provide an answer to the questions raised during the **R basics** workshop.
+
+* What about garbage collection in R?
+
+* Why do some variables already exist when I start a new session in RStudio?
+
+* Can RStudio automatically load packages at startup?
+
+* How can I debug my code?
+
+* What is the difference between `%Y` and `%y` in formatting date objects?
+
+---
+
+.title[
+  Setup
+]
+
+.vspaceM[
+
+]
+
+.code[
+We continue exploring the `tidyverse`. 
+
+Don't forget to load this package.
+
+```r
+#install.packages("tidyverse")
+require(tidyverse)
+```
+]
+
+---
+
+.title[
+Tidyverse
+]
+
+The tidyverse is a collection of R packages sharing the same design philosphy.
+
+
+
+`require(tidyverse)` loads the 8 core packages:
+
+&lt;div class="left-column3"&gt;
+
+&amp;bull; &lt;span style="color:#e0144e;"&gt;ggplot2&lt;/span&gt; &lt;br&gt;
+&amp;bull; &lt;span style="color:#e0144e;"&gt;dplyr&lt;/span&gt; &lt;br&gt;
+&amp;bull; &lt;span style="color:#e0144e;"&gt;tidyr&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;div class="center-column3"&gt;
+&amp;bull; &lt;span&gt;readr&lt;/span&gt; &lt;br&gt;
+&amp;bull; &lt;span style="color:#e0144e;"&gt;purrr&lt;/span&gt; &lt;br&gt;
+&amp;bull; &lt;span style="color:#e0144e;"&gt;tibble&lt;/span&gt; 
+
+&lt;/div&gt;
+
+&lt;div class="right-column3"&gt;
+&amp;bull; stringr &lt;br&gt;
+&amp;bull; forcats
+&lt;/div&gt;
+
+`install.package(tidyverse)` installs many other packages, including:
+
+&lt;div class="left-column3"&gt;
+
+&amp;bull; &lt;span style="color:#e0144e;"&gt;lubridate&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;div class="center-column3"&gt;
+
+&amp;bull; readxl 
+
+&lt;/div&gt;
+
+Today you will use &lt;span style="color:#e0144e;"&gt;6 packages&lt;/span&gt; from the tidyverse!
+
+---
+
+.title[
+Tidyverse
+]
+
+The tidyverse structures the full workflow of a data analyst.
+
+&lt;center&gt;
+&lt;img src="Images/tidyverse/tidy_workflow.png" width="500"/&gt;
+&lt;/center&gt;
+
+---
+class: inverse, center, middle
+
+# Programming style
+
+---
+
+.title[
+R style guide
+]
+
+Deciding on a programming style provides consistency to your code and assists in reading and writing code. 
+
+The choice of style guide is unimportant, but it is important to choose a style! 
+
+This workshop follows a set of rules roughly based on the [tidyverse style guide](https://style.tidyverse.org/).
+
+---
+
+.title[
+R style guide
+]
+
+Variable names contain only **lower case** letters. If the name consists of multiple words, then these words are separated by **underscores**. 
+
+
+```r
+number_of_simulations &lt;- 100
+```
+
+--
+
+User defined functions follow the same convention as variable names, but start with a capital letter.
+
+```r
+Multiply_by_2 &lt;- function(x) {
+  return(x * 2)
+} 
+```
+
+--
+
+Functions from external packages usually start with a lowercase letter.
+
+```r
+zero_list &lt;- rep(0, 100)
+```
+
+
+
+
+---
+
+class: inverse, center, middle
+
+# Data sets
+
+---
+.title[
+The policy data set
+]
+
+
+
+- `PolicyData.csv` available in the course material.
+
+- Policy covariates from a motor insurance portfolio.
+
+- Data stored in a `.csv` file. 
+
+- Individual records separated by a `semicolon`.
+
+--
+
+Extract the directory of the current active file in Rstudio. &lt;br&gt;  Requires installation of the package `rstudioapi`. 
+
+```r
+dir &lt;- dirname(rstudioapi::getActiveDocumentContext()$path)
+setwd(dir)
+```
+
+--
+
+Read and store the data
+
+```r
+policy_data &lt;- read.csv(file = '../data/PolicyData.csv', sep = ';')
+```
+
+---
+
+.title[
+R challenge
+]
+
+Use the skills you obtained in the **R basics** workshop.
+
+1. Inspect the top rows of the data set.
+
+1. How many observations does the data set contain?
+
+3. Calculate the total exposure (`exposition`) in each region (`type_territoire`). 
+
+---
+
+
+```r
+head(policy_data)
+```
+
+
+```
+##   numeropol  debut_pol    fin_pol freq_paiement langue
+## 1         3 14/09/1995 24/04/1996       mensuel      F
+## 2         3 25/04/1996 23/12/1996       mensuel      F
+## 3         6  1/03/1995 27/02/1996        annuel      A
+## 4         6  1/03/1996 14/01/1997        annuel      A
+## 5         6 15/01/1997 31/01/1997        annuel      A
+## 6         6  1/02/1997 28/02/1997        annuel      A
+```
+
+
+```r
+nrow(policy_data)
+```
+
+```
+## [1] 39075
+```
+
+```r
+policy_data %&gt;% 
+  group_by(type_territoire) %&gt;%
+  summarise(exposure = sum(exposition))
+```
+
+```
+## # A tibble: 3 x 2
+##   type_territoire exposure
+##   &lt;fct&gt;              &lt;dbl&gt;
+## 1 Rural               684.
+## 2 Semi-urbain       16944.
+## 3 Urbain            11050.
+```
+---
+
+.title[
+The gapminder package
+]
+
+.vspaceS[
+
+]
+
+- Data available in the package `gapminder`.
+
+- Describes the evolution of a number of population characteristics (GDP, life expectancy, ...) over time.
+
+.code[
+
+```r
+#install.packages("gapminder")
+require(gapminder)
+```
+]
+
+---
+
+.title[
+R challenge
+]
+
+Use the skills obtained in the **R basics workshop** to:
+
+1. Inspect the top rows of the data.
+
+2. Select the data for countries in Asia.
+
+3. Which type of variable is `country`?
+
+---
+
+.vspaceM[
+
+]
+
+
+```r
+head(gapminder)
+```
+
+```
+## # A tibble: 6 x 6
+##   country     continent  year lifeExp      pop gdpPercap
+##   &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+## 1 Afghanistan Asia       1952    28.8  8425333      779.
+## 2 Afghanistan Asia       1957    30.3  9240934      821.
+## 3 Afghanistan Asia       1962    32.0 10267083      853.
+## 4 Afghanistan Asia       1967    34.0 11537966      836.
+## 5 Afghanistan Asia       1972    36.1 13079460      740.
+## 6 Afghanistan Asia       1977    38.4 14880372      786.
+```
+
+
+
+```r
+asia &lt;-  filter(gapminder, continent == "Asia")
+```
+
+
+
+```r
+class(gapminder$country)
+```
+
+```
+## [1] "factor"
+```
+
+---
+class: inverse
+
+background-image: url("Images/Title/wrangling.PNG")
+background-size: 50%
+
+.titlecenter[
+  &lt;span style='color:#FFF'&gt;Data structures&lt;/span&gt;
+]
+---
+background-image: url("Images/Title/factor.jpg")
+background-size: cover
+
+.titlecenter[
+  Factor variables
+]
+
+---
+
+.title[
+What is a factor variable?
+]
+
+.vspaceS[
+
+]
+
+
++ Representation for categorical data.
+
++ Predefined list of outcomes (levels).
+
++ Protecting data quality.
+
+
+---
+
+.title[
+factor()
+]
+
+.vspaceS[
+
+]
+
+.code[
+`sex` is a categorical variable with two possible outcomes `m` and `f`.
+
+```r
+sex &lt;- factor(c('m', 'f', 'm', 'f'),
+*             levels = c('m', 'f'))
+```
+The `factor` command creates a new factor variable. 
+
+The first input is the categorical variable.
+]
+
+---
+
+.title[
+factor()
+]
+
+.vspaceS[
+
+]
+
+.code[
+`sex` is a categorical variable with two possible outcomes `m` and `f`.
+
+```r
+*sex &lt;- factor(c('m', 'f', 'm', 'f'),
+              levels = c('m', 'f')) 
+```
+`levels` specifies the possible outcomes of the variable.
+]
+
+---
+
+.title[
+factor()
+]
+
+Assigning an unrecognized level to a factor variable results in a warning.
+
+
+```r
+sex[1] &lt;- 'male'
+```
+
+```
+## Warning in `[&lt;-.factor`(`*tmp*`, 1, value = "male"): invalid factor level,
+## NA generated
+```
+
+This protects the quality of the data!
+
+
+```r
+sex
+```
+
+```
+## [1] &lt;NA&gt; f    m    f   
+## Levels: m f
+```
+
+
+
+
+The value `NA` is assigned to the invalid observation.
+---
+
+.title[
+levels()
+]
+
+.vspaceM[
+
+]
+
+.code[
+
+```r
+  levels(sex)
+```
+
+```
+## [1] "m" "f"
+```
+  `levels` prints the allowed outcomes for a factor variable.
+]
+
+---
+
+.title[
+levels()
+]
+
+.vspaceM[
+
+]
+
+.code[
+
+```r
+  levels(sex) &lt;- c('male', 'female')
+  sex
+```
+
+```
+## [1] male   female male   female
+## Levels: male female
+```
+  Assigning a vector to `levels()` renames the allowed outcomes. 
+]
+---
+
+.title[
+R challenge
+]
+
+The variable `country` in the `gapminder` data set is a factor variable.
+
+1. What are the possible levels for `country` in the subset `asia`.
+
+2. Is this the result you expected?
+---
+
+.vspaceM[
+
+]
+
+
+```r
+levels(asia$country)
+```
+
+```
+##  [1] "Afghanistan"            "Albania"               
+##  [3] "Algeria"                "Angola"                
+##  [5] "Argentina"              "Australia"             
+##  [7] "Austria"                "Bahrain"               
+##  [9] "Bangladesh"             "Belgium"               
+## [11] "Benin"                  "Bolivia"               
+## [13] "Bosnia and Herzegovina" "Botswana"              
+## [15] "Brazil"                 "Bulgaria"              
+## [17] "Burkina Faso"           "Burundi"               
+## [19] "Cambodia"               "Cameroon"              
+##  [ reached getOption("max.print") -- omitted 122 entries ]
+```
+
+&lt;br&gt;
+
+`asia$country` allows the same outcomes as `gapminder$country`. 
+
+This includes many countries outside of Asia.
+
+---
+
+.title[
+droplevels()
+]
+
+.vspaceM[
+
+]
+
+.code[
+
+```r
+asia$country &lt;- droplevels(asia$country)
+```
+  `droplevels` removes all outcomes which do not appear in the factor variable.
+]
+
+---
+
+.vspaceS[
+
+]
+
+
+```r
+levels(asia$country)
+```
+
+```
+##  [1] "Afghanistan"        "Bahrain"            "Bangladesh"        
+##  [4] "Cambodia"           "China"              "Hong Kong, China"  
+##  [7] "India"              "Indonesia"          "Iran"              
+## [10] "Iraq"               "Israel"             "Japan"             
+## [13] "Jordan"             "Korea, Dem. Rep."   "Korea, Rep."       
+## [16] "Kuwait"             "Lebanon"            "Malaysia"          
+## [19] "Mongolia"           "Myanmar"            "Nepal"             
+## [22] "Oman"               "Pakistan"           "Philippines"       
+## [25] "Saudi Arabia"       "Singapore"          "Sri Lanka"         
+## [28] "Syria"              "Taiwan"             "Thailand"          
+## [31] "Vietnam"            "West Bank and Gaza" "Yemen, Rep."
+```
+
+---
+.title[
+  Add level
+]
+
+.vspaceM[
+
+]
+
+.code[
+
+```r
+levels(sex) &lt;- c(levels(sex), 'x')
+```
+Adds `x` as a new allowed outcome for the variable `sex`. 
+]
+
+---
+.title[
+  cut()
+]
+
+.vspaceM[
+
+]
+
+.code[
+
+```r
+cut(gapminder$pop,
+*   breaks = c(0, 10^7, 5*10^7, 10^8, Inf))
+```
+`cut()` bins a numeric variable into a factor variable. 
+
+We bin the number of inhabitans in a country (`gapminder$pop`).
+]
+
+---
+.title[
+  cut()
+]
+
+.vspaceM[
+
+]
+
+.code[
+
+```r
+*cut(gapminder$pop,
+    breaks = c(0, 10^7, 5*10^7, 10^8, Inf)) 
+```
+`breaks` specifies the cutoff values.
+]
+
+---
+
+.title[
+R challenge
+]
+
+Bin the life expectancy in 2007 in a factor variable.
+
+1. Select the observations for year 2007.
+
+2. Bin the life expectancy in four bins of roughly equal size (hint: `quantile`).
+
+3. How many observations are there in each bin?
+---
+
+.vspaceM[
+
+]
+
+
+
+
+```r
+gapminder2007 &lt;- filter(gapminder, year == 2007)
+breaks &lt;- c(0, quantile(gapminder2007$lifeExp, c(0.25, 0.5, 0.75)), Inf)
+breaks                   
+```
+
+```
+##               25%      50%      75%          
+##  0.00000 57.16025 71.93550 76.41325      Inf
+```
+
+```r
+gapminder2007 &lt;- gapminder2007 %&gt;% 
+  mutate(life_expectancy_binned = cut(gapminder2007$lifeExp, breaks))
+
+gapminder2007 %&gt;%
+  group_by(life_expectancy_binned) %&gt;%
+  summarise(frequency = n())
+```
+
+```
+## # A tibble: 4 x 2
+##   life_expectancy_binned frequency
+##   &lt;fct&gt;                      &lt;int&gt;
+## 1 (0,57.2]                      36
+## 2 (57.2,71.9]                   35
+## 3 (71.9,76.4]                   35
+## 4 (76.4,Inf]                    36
+```
+
+---
+
+.title[
+  geom_bar()
+]
+
+
+```r
+*ggplot(gapminder2007) +
+  geom_bar(aes(life_expectancy_binned))
+```
+
+&lt;img src="advanced_R_workshop_NN_files/figure-html/unnamed-chunk-28-1.png" style="display: block; margin: auto;" /&gt;
+
+`geom_bar` takes a factor variable and creates a bar plot.
+
+---
+
+.title[
+  geom_bar()
+]
+
+
+```r
+*ggplot(gapminder2007) +
+* geom_bar(aes(life_expectancy_binned,
+               fill = continent))
+```
+
+&lt;img src="advanced_R_workshop_NN_files/figure-html/unnamed-chunk-29-1.png" style="display: block; margin: auto;" /&gt;
+
+`fill = continent` selects a different fill color for each continent. 
+
+---
+
+.title[
+  geom_bar()
+]
+
+
+```r
+*ggplot(gapminder2007) +
+* geom_bar(aes(life_expectancy_binned,
+*              fill = continent),
+           position = position_dodge())
+```
+
+&lt;img src="advanced_R_workshop_NN_files/figure-html/unnamed-chunk-30-1.png" style="display: block; margin: auto;" /&gt;
+
+`position = position_dodge()` shows the bars side-by-side instead of stacked.
+
+---
+
+.title[
+  geom_bar()
+]
+
+
+```r
+*ggplot(gapminder2007) +
+* geom_bar(aes(life_expectancy_binned,
+*              fill = continent,
+               y = ..prop.., group = continent), 
+*          position = position_dodge())
+```
+
+&lt;img src="advanced_R_workshop_NN_files/figure-html/unnamed-chunk-31-1.png" style="display: block; margin: auto;" /&gt;
+
+`y = ..prop..` and `group = continent` plot the proportion within each group instead of the absolute count.
+
+---
+
+background-image: url("Images/Title/time.jpg")
+background-size: cover
+
+.titlecenter[
+  &lt;span style='color:#FFF'&gt;Date management&lt;/span&gt;
+]
+
+---
+
+.title[
+Efficient handling of dates
+]
+
+.vspaceS[
+
+]
+
+You will learn to:
+
+* store dates in the `Date` format in R
+
+* convert text and numerical variables into a `Date` object
+
+* perform basic calculations with dates
+
+* start with base R and continue with lubridate.
+
+---
+
+.title[
+  as.Date()
+]
+
+.vspaceM[
+
+]
+
+.code[
+
+```r
+as.Date('2019-06-05', 
+*       format = '%Y-%m-%d)
+```
+`as.Date` converts text into an R `Date` object. 
+
+First input is a vector of dates in text format.
+]
+
+---
+
+.title[
+  as.Date()
+]
+
+.code[
+
+```r
+*as.Date('2019-06-05',
+        format = '%Y-%m-%d) 
+```
+The `format` describes the structure of the input. &lt;br&gt;
+* `%Y`: Year, 4 digit notation
+* `%m`: Month number
+* `%d`: Day of the month.
+]
+
+For a full list of formating options, see
+
+```r
+?strptime
+```
+
+---
+
+.title[
+  as.Date()
+]
+
+.vspaceM[
+
+]
+
+.code[
+
+
+```r
+as.Date(21705, origin = '1960-01-01')
+```
+Dates are often stored as integers.
+
+Convert integers to dates by speciying the origin (Day 0). 
+
+For example: SAS stores dates at the number of days elapsed since 1 Jan 1960. 
+]
+
+---
+
+.title[
+R challenge
+]
+
+Work with the `policy_data` data set.
+
+1. Convert the start date (`debut_pol`) and end date (`fin_pol`) into R `Date` objects.
+---
+
+.vspaceS[
+
+]
+
+
+```r
+policy_data$start &lt;- as.Date(policy_data$debut_pol, '%d/%m/%Y')
+policy_data$end &lt;- as.Date(policy_data$fin_pol, '%d/%m/%Y')
+```
+
+
+```r
+head(policy_data %&gt;% select(c('debut_pol', 'start')))
+```
+
+```
+##    debut_pol      start
+## 1 14/09/1995 1995-09-14
+## 2 25/04/1996 1996-04-25
+## 3  1/03/1995 1995-03-01
+## 4  1/03/1996 1996-03-01
+## 5 15/01/1997 1997-01-15
+## 6  1/02/1997 1997-02-01
+```
+
+```r
+class(policy_data$start)
+```
+
+```
+## [1] "Date"
+```
+
+---
+
+.title[
+  format()
+]
+
+.vspaceS[
+
+]
+
+.code[
+
+```r
+*today &lt;- as.Date('2019-06-05',
+*               format = '%Y-%m-%d')
+format(today, '%A %d %B %Y')
+```
+
+```
+## [1] "woensdag 05 juni 2019"
+```
+`format` converts a date into text &lt;br&gt;
+* `%A`: full weekday name &lt;br&gt;
+* `%B`: full month name
+]
+
+---
+.title[
+  Adding and subtracting dates
+]
+
+Calculate the duration of a contract.
+.code[
+
+```r
+policy_duration = 
+  policy_data$end - policy_data$start
+```
+Subtracting dates calculates the number of days elapsed between these dates.
+
+
+```r
+tomorrow = today + 1
+print(tomorrow)
+```
+
+```
+## [1] "2019-06-06"
+```
+You can add and subtract integers from dates.
+]
+
+---
+.title[
+  Lubridate
+]
+
+For more advanced `Date` manipulations use the `lubridate` package.
+.code[
+
+```r
+# install.packages("lubridate")
+require(lubridate)
+```
+]
+
+&lt;img src="Images/title/lubridate.png" width="20%" style="display: block; margin: auto;" /&gt;
+
+---
+
+.title[
+Access date components
+]
+
+.vspaceM[
+
+]
+
+
+```r
+year(today)
+```
+
+```
+## [1] 2019
+```
+`year()` selects the calendar year component from the date.
+
+Other components are: `month()`, `day()`, `quarter()`, ...
+
+---
+
+.title[
+Advanced date math
+]
+
+.vspaceM[
+
+]
+
+.code[
+
+
+```r
+today + months(3)
+```
+
+```
+## [1] "2019-09-05"
+```
+`+ months(3)` adds three months to the Date object.
+
+Other periods are: `years()` and `days()`.
+]
+
+---
+
+.title[
+Advanced date math
+]
+
+.vspaceM[
+
+]
+
+.code[
+
+
+```r
+floor_date(today, unit = "month")
+```
+
+```
+## [1] "2019-06-01"
+```
+`floor_date` rounds down to the nearest unit. 
+
+In the example convert daily into monhtly data.
+]
+
+---
+
+.title[
+seq()
+]
+
+.vspaceS[
+
+]
+
+.code[
+
+
+```r
+seq(from = as.Date('2019-01-01'), 
+    to = as.Date('2019-12-31'), 
+    by = '1 month')
+```
+
+```
+##  [1] "2019-01-01" "2019-02-01" "2019-03-01" "2019-04-01" "2019-05-01"
+##  [6] "2019-06-01" "2019-07-01" "2019-08-01" "2019-09-01" "2019-10-01"
+## [11] "2019-11-01" "2019-12-01"
+```
+Generate a sequence of dates, useful in loops.
+]
+
+---
+
+.title[
+R challenge
+]
+
+Visualize the exposure contribution by start month of the contract in the `policy_data` data set.
+
+1. Add a covariate `start_month` to the data set.
+
+2. Group the data by `start_month`.
+
+3. Calculate the exposure within each group.
+
+4. Plot the data.
+
+
+---
+
+```r
+exposure_by_month &lt;- policy_data %&gt;%
+  mutate(start_month = floor_date(policy_data$start, unit = 'month')) %&gt;%
+  group_by(start_month) %&gt;% 
+  summarize(exposure = sum(exposition))
+  
+ggplot(exposure_by_month) +
+  geom_point(aes(start_month, exposure))
+```
+
+&lt;img src="advanced_R_workshop_NN_files/figure-html/unnamed-chunk-48-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+class: inverse
+
+background-image: url("Images/Title/purrr.png")
+background-size: 50%
+
+.titlecenter[
+  &lt;span style='color:#FFF'&gt;Functional programming&lt;/span&gt;
+]
+
+---
+
+.title[
+  What is a functional?
+]
+
+A functional is a function which takes a function as input. 
+
+Example: the integral operator 
+
+$$ \int_0^{1}: C([0, 1]) \to \mathbb{R}, f \mapsto \int_0^{1} f(x) \, dx,$$
+where `\(C([0, 1])\)` is the set of continuous functions on `\([0, 1]\)`.
+
+
+```r
+f &lt;- function(x){
+  x^2
+}
+integrate(f, lower = 0, upper = 1)
+```
+
+```
+## 0.3333333 with absolute error &lt; 3.7e-15
+```
+
+---
+
+.title[
+  Why functional programming?
+]
+
+This approach offers:
+
+* an intuitive alternative for loops.
+  
+* code that is easy to read and interpret
+
+**Example**: 
+
+Is there a policyholder who is a minor in the data set becomes:
+
+```r
+some(policy_data$age, Is_minor)
+```
+
+* Easily modifiable and reusable code.
+
+* No need to copy/paste the same code many times. 
+
+* If you use something twice, put it in a function.
+
+
+
+---
+
+.title[
+  purrr
+]
+
+.vspaceM[
+
+]
+
+.code[
+`purrr` is the tidyverse package for functional programming.
+
+
+```r
+# install.packages(purrr)
+require(purrr)
+```
+
+]
+
+---
+
+.title[
+map()
+]
+
+![](Images/purrr/map.png)
+.caption[
+Illustration from the [purrr cheat sheet](https://github.com/rstudio/cheatsheets/blob/master/purrr.pdf)
+]
+
+
+.code[
+
+
+```r
+map(policy_data, class)
+```
+
+Apply the function `class` to each column of the data set `policy_data`.
+]
+
+---
+
+.title[
+map()
+]
+
+
+```r
+map(policy_data, class)
+```
+
+```
+## $numeropol
+## [1] "integer"
+## 
+## $debut_pol
+## [1] "factor"
+## 
+## $fin_pol
+## [1] "factor"
+## 
+## $freq_paiement
+## [1] "factor"
+## 
+##  [ reached getOption("max.print") -- omitted 20 entries ]
+```
+
+The output of `map` is stored in a `list`.
+
+---
+
+.title[
+map_chr()
+]
+
+.code[
+
+
+```r
+map_chr(policy_data, class)
+```
+
+```
+## numeropol debut_pol   fin_pol 
+## "integer"  "factor"  "factor" 
+##  [ reached getOption("max.print") -- omitted 21 entries ]
+```
+If the output should be of class `character`, use `map_chr`. &lt;br&gt;
+* Additional type check when applying the function.
+
+* Returns a vector instead of a list.
+
+Other `map` output types: &lt;br&gt;
+* `map_int` for integers &lt;br&gt;
+* `map_dbl` for doubles
+]
+
+---
+
+.title[
+keep()
+]
+
+.vspaceM[
+
+]
+
+.code[
+
+```r
+factor_data &lt;- keep(policy_data, 
+                    is.factor)
+```
+Keeps the columns of `policy_data` for which the function `is.factor` returns `TRUE`.  
+]
+
+---
+
+.title[
+discard()
+]
+
+.vspaceM[
+
+]
+
+.code[
+
+```r
+non_factor_data &lt;- discard(policy_data, 
+                           is.factor)
+```
+
+Discards the columns of `policy_data` for which the function `is.factor` returns `TRUE`.  
+]
+
+---
+
+
+.title[
+every()
+]
+
+.vspaceM[
+
+]
+
+.code[
+
+```r
+every(policy_data$cout1, is.na)
+```
+
+```
+## [1] FALSE
+```
+
+Returns `TRUE` if and only if `is.na` returns TRUE for all observations in `policy_data$cout1`.  
+]
+
+---
+
+
+.title[
+some()
+]
+
+.vspaceM[
+
+]
+
+.code[
+
+```r
+some(policy_data$cout1, is.na)
+```
+
+```
+## [1] TRUE
+```
+
+Returns `TRUE` if `policy_data$cout1` contains an observation for which `is.na` returns TRUE.
+]
+
+---
+
+.title[
+User-defined functions
+]
+
+.vspaceS[
+
+]
+
+.code[
+
+```r
+Is_minor &lt;- function(age) {
+  return(age &lt; 18)
+}
+some(policy_data$age, Is_minor)
+```
+
+```
+## [1] FALSE
+```
+
+Unlock the true potential of the purrr functionals by applying them to user-defined functions.
+]
+
+---
+
+.title[
+R challenge
+]
+
+- Discard all columns containing `NA` observations from the `policy_data` data set.
+
+---
+
+.vspaceM[
+
+]
+
+
+```r
+Some_na &lt;- function(x) {
+  some(x, is.na)
+}
+
+policy_data_cleaned &lt;- policy_data %&gt;%
+       discard(Some_na)
+```
+
+You can abbreviate this code as
+
+
+```r
+policy_data_cleaned &lt;- policy_data %&gt;%
+    discard(~ some(.x, is.na))
+```
+
+Here `~[code]` is an abbreviation for `function(.x){[code]}`. &lt;br&gt;
+You can use this for simple functions with a single input.
+
+---
+
+.title[
+nest()
+]
+
+.vspaceM[
+
+]
+
+.code[
+
+```r
+*policy_data %&gt;%
+* group_by(utilisation) %&gt;%
+  nest()
+```
+
+`nest()` splits the data set into smaller sub sets based on the `group_by` category
+]
+
+---
+.title[
+nest()
+]
+
+
+```r
+nested_data &lt;- policy_data %&gt;% 
+  group_by(utilisation) %&gt;% 
+  nest()
+
+print(nested_data)
+```
+
+```
+## # A tibble: 3 x 2
+##   utilisation         data                  
+##   &lt;fct&gt;               &lt;list&gt;                
+## 1 Travail-quotidien   &lt;tibble [10,867 x 23]&gt;
+## 2 Travail-occasionnel &lt;tibble [25,966 x 23]&gt;
+## 3 Loisir              &lt;tibble [2,242 x 23]&gt;
+```
+
+`nested_data` contains three sub data sets. One for each type of vehicle use.
+
+---
+
+.title[
+R challenge
+]
+
+We investigate the variable `utilisation` (vehicle use) in the policy data set.
+
+1. Remove observations without claim cost (`cout` = 0)
+
+2. Group the data by `utilisation`. 
+
+3. Calculate the number of observations and average severity for each group.
+
+---
+
+.vspaceM[
+
+]
+
+
+```r
+policy_data %&gt;% 
+  filter(cout &gt; 0) %&gt;%
+  group_by(utilisation) %&gt;%
+  summarise(avg = mean(cout), count = n())
+```
+
+```
+## # A tibble: 3 x 3
+##   utilisation            avg count
+##   &lt;fct&gt;                &lt;dbl&gt; &lt;int&gt;
+## 1 Loisir              13258.   408
+## 2 Travail-occasionnel  8533.  3938
+## 3 Travail-quotidien    9537.  1343
+```
+
+`summarise` is useful for computing basic statistics for individual variables from the data set.
+
+---
+.title[
+R challenge
+]
+
+We want to investigate the claim cost of young drivers (age &lt; 30). Specifically we want to see whether the cost depends on the use of the vehicle.
+
+We will verify this by:
+* Fitting a linear regression model 
+`$$\text{cout} \sim  \text{young_driver}$$`
+on subsets of the data split by vehicle use.
+
+* Comparing the fitted parameter for the young driver effect.
+
+---
+.title[
+R challenge
+]
+
+Add a variable for young drivers and split the data by `utilisation`.
+
+```r
+nested_data &lt;- policy_data %&gt;% 
+  mutate(young_driver = age &lt; 30) %&gt;%
+  filter(cout &gt; 0) %&gt;%
+  group_by(utilisation) %&gt;%
+  nest()
+```
+
+Create a function for fitting our linear model.
+
+```r
+Fit_model &lt;- function(df) {
+  lm(cout ~ young_driver, data = df)
+}
+```
+
+---
+
+.title[
+R challenge
+]
+
+Fit the linear model on each subset of the data using `map`.
+
+```r
+result &lt;- nested_data %&gt;%
+  mutate(model = map(data, Fit_model))
+```
+
+Select the young driver effect from the model.
+
+```r
+SelectCoef &lt;- function(fit){
+  coefficients(fit)["young_driverTRUE"]
+}
+
+result &lt;- result %&gt;% 
+  mutate(effect_young_driver = map_dbl(model, SelectCoef))
+```
+
+---
+
+.title[
+R challenge
+]
+
+
+```r
+result %&gt;% select(utilisation, effect_young_driver)
+```
+
+```
+## # A tibble: 3 x 2
+##   utilisation         effect_young_driver
+##   &lt;fct&gt;                             &lt;dbl&gt;
+## 1 Travail-occasionnel                165.
+## 2 Travail-quotidien                 4693.
+## 3 Loisir                           -3650.
+```
+
+The advantages of having used functionals:
+* easily modifiable code: what do you have to change in order to explore the interaction between young_drivers and terrain?
+
+* no loops
+
+* readable, intuitive code.
+
+---
+
+background-image: url("Images/Title/debug.jpg")
+background-size: cover
+
+.titlecenter[
+  &lt;span style='color:#FFF'&gt;Debugging&lt;/span&gt; 
+]
+
+---
+
+.title[
+Send the right message
+]
+
+R provides four methods for giving feedback: 
+
+* print
+
+* message
+
+* warning
+
+* stop
+
+---
+
+.title[
+Factorial
+]
+
+
+Here is a function to calculate `\(n! = n \cdot (n-1) \cdot \ldots 1\)`
+
+
+```r
+Factorial &lt;- function(n) { 
+  result &lt;- 1 
+  for(i in 1:n) { 
+    result &lt;- result * i 
+  } 
+  return(result) 
+*} 
+
+fac5 &lt;- Factorial(5)
+```
+
+Let's add some messages to this function!
+
+---
+
+.title[
+print()
+]
+
+
+```r
+*Factorial &lt;- function(n) {
+* result &lt;- 1
+* for(i in 1:n) {
+*   result &lt;- result * i
+* }
+* return(result)
+*} 
+
+*fac5 &lt;- Factorial(5)
+print(fac5)
+```
+
+```
+## [1] 120
+```
+
+Use `print()` when you want to display the value of a variable in the console.
+
+---
+
+.title[
+message()
+]
+
+
+```r
+Factorial &lt;- function(n) { 
+  result &lt;- 1 
+  for(i in 1:n) { 
+    result &lt;- result * i
+    message("step ", i, " from ", n, " -- result: ", result)
+  } 
+  return(result) 
+} 
+
+fac3 &lt;- Factorial(3) 
+```
+
+```
+## step 1 from 3 -- result: 1
+```
+
+```
+## step 2 from 3 -- result: 2
+```
+
+```
+## step 3 from 3 -- result: 6
+```
+
+Use `message()` for diagnostic information, such as runtime and intermediary results.
+
+---
+
+.title[
+Debugging Factorial()
+]
+
+What could go wrong when calling `Factorial(n)`?
+
+* `n` might be non-integer, for example: 1.2 
+
+A function for checking whether n is an integer:
+
+```r
+Is_int &lt;- function(n) {
+  return(n == round(n))
+}
+```
+
+
+* `n` can be negative, for example: -5
+
+* `n` can be non-numeric, for example: "5", `c(3, 5)`.
+
+
+
+---
+
+.title[
+warning()
+]
+
+
+```r
+Factorial &lt;- function(n) {
+  if(!Is_int(n)){
+    warning("non-integer value (n = ", n, ") in Factorial(). Calculating gamma(n+1).")
+    return(gamma(n+1))
+  }
+  result &lt;- 1 
+  for(i in 1:n) { 
+    result &lt;- result * i 
+  } 
+  return(result) 
+} 
+
+fac3.5 &lt;- Factorial(3.5) 
+```
+
+```
+## Warning in Factorial(3.5): non-integer value (n = 3.5) in Factorial().
+## Calculating gamma(n+1).
+```
+
+Use `warning()` for suspicious, but non critical events. 
+
+---
+
+.title[
+stop()
+]
+
+
+```r
+Factorial &lt;- function(n) {
+  if(!is.numeric(n) || n &lt; 0){
+    stop('Argument "n" in Factorial() must be a positive number.')
+  }
+  result &lt;- 1 
+  for(i in 1:n) { 
+    result &lt;- result * i 
+  } 
+  return(result) 
+} 
+
+fac5 &lt;- Factorial("5") 
+```
+
+```
+## Error in Factorial("5") : 
+##   Argument "n" in Factorial() must be a positive number.
+```
+
+Use `stop()` for critical events that demand an immediate interruption of the code.
+
+---
+
+.title[
+What message to send?
+]
+
+.vspaceS[
+
+]
+
+* You fit a regression model `\(y \sim x_1 + x_2\)`, but the input covariates `\(x_1\)`, `\(x_2\)` are colinear.
+
+--
+
+
+```r
+warning("Colinearity detected in the regression variables.")
+```
+
+--
+
+* You use an iterative algorithm to fit parameters of a model. You want to display the optimal parameters after each iteration.
+
+--
+
+
+```r
+message("iteration ", i, ": ", param)
+```
+
+---
+
+.title[
+What message to send?
+]
+
+* You have a function with inputs `\(\mu\)` and `\(\sigma &gt; 0\)`. &lt;br&gt;
+The input for `\(\sigma\)` is negative.
+
+--
+
+
+```r
+stop("Positive value required for sigma parameter.")
+```
+
+--
+
+* You fitted a model and want to inspect the fitted coeficients
+
+--
+
+
+```r
+print(coefficients(fit))
+```
+or
+
+```r
+coefficients(fit)
+```
+
+---
+
+.title[
+  Spotting bugs
+]
+
+Finding an error is often harder than solving the error.
+
+The function below computes the largest element in a vector `x`.
+
+```r
+Largest &lt;- function(x) {
+  result &lt;- -Inf
+  for(i in 1:length(x)) {
+    if(x[i] &gt; result) {
+      result &lt;- x[i]
+    }
+  }
+  return(result)
+}
+```
+
+---
+
+.title[
+  Spotting bugs
+]
+
+We generate a set of test inputs
+
+```r
+set.seed(31415) # For reproducibility
+
+candidates &lt;- rpois(100, lambda = 2) %&gt;%
+  map(runif)
+head(candidates, 2)
+```
+
+```
+## [[1]]
+## [1] 0.9841379 0.1578220 0.1479970 0.4958537 0.3058589
+## 
+## [[2]]
+## [1] 0.8507827
+```
+
+
+We have an error? Why?
+
+```r
+map(candidates, Largest)
+```
+
+```
+## Error in if (x[i] &gt; result) { : missing value where TRUE/FALSE needed
+```
+
+---
+
+.title[
+  Spotting bugs
+]
+
+**In RStudio**: Debug &gt; On Error &gt; Break in Code.
+
+![](Images/debug/break.png)
+---
+
+.title[
+  Spotting bugs
+]
+
+The error inspector opens when an error `stop()` occurs:
+
+&lt;img src="Images/debug/break2_comment.png" width="85%" style="display: block; margin: auto;" /&gt;
+
+---
+
+.title[
+  Spotting bugs
+]
+
+When `length(x)` is zero, the for loop iterates over `c(1, 0)`.
+
+
+```r
+Largest &lt;- function(x) {
+  result &lt;- -Inf
+  for(i in 1:length(x)) {
+    if(x[i] &gt; result) {
+      result &lt;- x[i]
+    }
+  }
+  return(result)
+}
+```
+
+Advice: replace `1:length(x)` by `seq_along(x)` in for loops.
+
+
+```r
+print(seq_along(c()))
+```
+
+```
+## integer(0)
+```
+
+---
+
+.title[
+  browser()
+]
+.vspaceS[
+
+]
+.code[
+
+```r
+f &lt;- function() {
+  ...
+  browser()
+  ...
+}
+```
+The error inspector opens when `browser()` is reached. &lt;br&gt;
+No error message required!
+]
+
+---
+
+background-image: url("Images/Title/benchmark.jpg")
+background-size: cover
+
+.title[
+  &lt;span style='color:#FFF'&gt;Benchmarking&lt;/span&gt; 
+]
+
+---
+.title[
+Sys.time()
+]
+
+.vspaceS[
+
+]
+
+.code[
+
+```r
+start_time &lt;- Sys.time()
+x &lt;- runif(10^7)
+end_time &lt;- Sys.time()
+end_time - start_time
+```
+
+```
+## Time difference of 0.584002 secs
+```
+Use `Sys.time()` to measure the elapsed time between two steps of the program and detect efficiency bottlenecks.
+]
+
+---
+.title[
+microbenchmark
+]
+
+.vspaceS[
+
+]
+
+.code[
+* `microbenchmark` profiles the computation time of code. 
+
+* Determine the most efficient implementation, when runtime is important.
+
+
+```r
+#install.packages("microbenchmark")
+require(microbenchmark)
+```
+]
+
+---
+.title[
+  R challenge
+]
+
+We implement a function called `Column_product`, which multiplies the `\(i\)`-th column of a matrix `m` by the `\(i\)`-th element in a `v`. &lt;br&gt;
+
+`$$\texttt{Column_product}(m = \begin{bmatrix}1 &amp; 2\\3 &amp; 4\end{bmatrix}, v = \begin{bmatrix}2\\4\end{bmatrix}) = \begin{bmatrix}2 &amp; 8\\6 &amp; 16\end{bmatrix}$$`
+
+.vspaceS[
+
+]
+
+Create your own implementation of `Column_product()`.
+
+
+---
+
+Intuitive solution (for-loop):
+
+```r
+Column_product &lt;- function(m, v){
+  for(j in 1:ncol(m)) {
+    m[, j] &lt;- m[, j] * v[j]
+  }
+  return(m)
+}
+```
+
+Other solutions:
+
+```r
+m %*% diag(v)
+```
+
+```r
+t(v * t(m))
+```
+
+```r
+m * rep(v, each = nrow(m))
+```
+
+```r
+m * rep(v, rep(nrow(m), length(v)))
+```
+---
+
+.title[
+  microbenchmark()
+]
+
+.vspaceS[
+
+]
+
+.code[
+
+```r
+microbenchmark(code1,
+               code2,
+               ...)
+```
+]
+Compares the efficiency of the different code chuncks (`code1`, `code2`, ...) provided.
+
+
+---
+.title[
+  microbenchmark()
+]
+
+
+```r
+m &lt;- matrix(rnorm(200*200), nrow = 200)
+v &lt;- runif(200)
+benchmark &lt;- microbenchmark(Column_product(m, v),
+               t(v * t(m)),
+               m %*% diag(v),
+               m * rep(v, each = nrow(m)),
+               m * rep(v, rep(nrow(m), length(v))))
+autoplot(benchmark)
+```
+
+&lt;img src="advanced_R_workshop_NN_files/figure-html/unnamed-chunk-98-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+.title[
+  Memory usage
+]
+Choose Grid as the display method in the variable pane to view important properties (including size) of the local variables. 
+
+&lt;center&gt;
+
+&lt;img src="Images/benchmark/memory.png" style="margin:20px;" width="500px"&gt;
+
+&lt;/center&gt;
+
+---
+
+.titlecenter[
+  Rproject 
+]
+
+&lt;center&gt;
+&lt;img src="Images/title/Rproject.PNG" style="margin:20px;" width="300px"&gt;
+&lt;/center&gt;
+
+---
+
+.title[
+  Rproject
+]
+
+RStudio projects allow to organize your programming code. &lt;br&gt;
+
+An RProject file manages:
+
+* working directory
+
+* R history (.Rhistory)
+
+* Startup code (.Rprofile)
+
+* Startup data (.RData)
+
+Rprojects improve collaboration and reproducibility, as these elements will be identical for all users.
+
+Create a new Rproject by clicking: &lt;span style='font-weight:bold'&gt;File &gt; New project...&lt;/span&gt;
+
+
+---
+
+.title[
+  .Rprofile
+]
+
+At startup, R sources &lt;span style='font-weight:bold'&gt;.Rprofile&lt;/span&gt; in the working directory of a project.
+
+* Load packages required in the project.
+
+```r
+require(ggplot2)
+```
+
+* Specify a company wide plotting styles.
+
+```r
+company_green &lt;- "#87D37C"
+
+plot_style &lt;- theme_bw() +
+	theme(plot.title = element_text(size = 20,
+	                                hjust = 0.5))
+```
+
+* Source custom functions required for the project.
+
+```r
+source(functions.R)
+```
+
+---
+
+.title[
+More resources
+]
+
+[R for Data Science](https://r4ds.had.co.nz/) focuses on using the tidyverse for consistent R programming.
+
+[Mastering Software Development in R](https://leanpub.com/msdr) explains many common R functions through intuitive examples.
+
+[Advanced R](https://adv-r.hadley.nz/) helps you to master the R languague.
+&lt;br&gt;
+&lt;center&gt;
+&lt;div&gt;
+&lt;img height='200px' src='images/books/datascience.png'&gt; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;
+&lt;img height='200px' src='images/books/mastering.png'&gt; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;
+&lt;img height='200px' src='images/books/advancedR.png'&gt;
+&lt;/div&gt;
+&lt;/center&gt;
+
+---
+
+class: center, middle
+
+# Thanks!
+
+Slides created via the R package [**xaringan**](https://github.com/yihui/xaringan).
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
