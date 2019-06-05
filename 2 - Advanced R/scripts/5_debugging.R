@@ -33,7 +33,7 @@ Factorial <- function(n) {
   }
   return(result)
 }
-fac5 <- Factorial(3)
+fac3 <- Factorial(3)
 
 ## warning(), 83 -----------------------------------
 
