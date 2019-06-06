@@ -17,7 +17,7 @@ Factorial <- function(n) {
   return(result)
 }
 
-fac5 <- Factorial(5)
+fac_five <- Factorial(5)
 
 ## print(), 80 ------------------------------------
 
@@ -33,7 +33,7 @@ Factorial <- function(n) {
   }
   return(result)
 }
-fac3 <- Factorial(3)
+fac_three <- Factorial(3)
 
 ## warning(), 83 -----------------------------------
 
@@ -52,8 +52,8 @@ Factorial <- function(n) {
   }
   return(result)
 }
-fac3.5 <- Factorial(3.5)
-print(fac3.5)
+fac_double <- Factorial(3.5)
+print(fac_double)
 
 ## stop(), 84 ----------------------------------------
 

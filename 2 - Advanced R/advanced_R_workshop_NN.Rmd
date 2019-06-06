@@ -1382,7 +1382,7 @@ Factorial <- function(n) {
   return(result) 
 } #<<
 
-fac5 <- Factorial(5)
+fac_five <- Factorial(5)
 ```
 
 Let's add some messages to this function!
@@ -1402,8 +1402,8 @@ Factorial <- function(n) { #<<
   return(result) #<<
 } #<<
 
-fac5 <- Factorial(5) #<<
-print(fac5)
+fac_five <- Factorial(5) #<<
+print(fac_five)
 ```
 
 Use `print()` when you want to display the value of a variable in the console.
@@ -1424,7 +1424,7 @@ Factorial <- function(n) {
   return(result) 
 } 
 
-fac3 <- Factorial(3) 
+fac_three <- Factorial(3) 
 ```
 
 Use `message()` for diagnostic information, such as runtime and intermediary results.
@@ -1472,7 +1472,7 @@ Factorial <- function(n) {
   return(result) 
 } 
 
-fac3.5 <- Factorial(3.5) 
+fac_double <- Factorial(3.5) 
 ```
 
 Use `warning()` for suspicious, but non critical events. 
@@ -1495,7 +1495,7 @@ Factorial <- function(n) {
   return(result) 
 } 
 
-fac5 <- Factorial("5") 
+fac_five <- Factorial("5") 
 ```
 ```{r, echo = FALSE}
 cat('Error in Factorial("5") : 
