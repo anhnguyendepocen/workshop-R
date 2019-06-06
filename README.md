@@ -43,5 +43,5 @@ if(sum(!(all_packages %in% installed.packages()[, "Package"]))) {
 
 ### Course material
 
-Coming soon!
+Lecture sheets are available in the folders `1 - Basic R` and `2 - Advanced R`. These folders also host the scripts used throughout the workshop. Data sets are stored in the `data` folder. Happy learning!
 
