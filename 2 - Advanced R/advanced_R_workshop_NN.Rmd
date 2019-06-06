@@ -129,7 +129,7 @@ The tidyverse is a collection of R packages sharing the same design philosphy.
 &bull; forcats
 </div>
 
-`install.package(tidyverse)` installs many other packages, including:
+`install.package("tidyverse")` installs many other packages, including:
 
 <div class="left-column3">
 
@@ -1011,7 +1011,7 @@ some(policy_data$age, Is_minor)
 `purrr` is the tidyverse package for functional programming.
 
 ```{r, message = FALSE, warning = FALSE}
-# install.packages(purrr)
+# install.packages("purrr"")
 require(purrr)
 ```
 
@@ -1314,12 +1314,12 @@ result <- nested_data %>%
 
 Select the young driver effect from the model.
 ```{r}
-SelectCoef <- function(fit){
+Select_coef <- function(fit){
   coefficients(fit)["young_driverTRUE"]
 }
 
 result <- result %>% 
-  mutate(effect_young_driver = map_dbl(model, SelectCoef))
+  mutate(effect_young_driver = map_dbl(model, Select_coef))
 ```
 
 ---

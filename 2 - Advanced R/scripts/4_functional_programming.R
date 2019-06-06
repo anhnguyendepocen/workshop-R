@@ -112,13 +112,13 @@ result <- nested_data %>%
   mutate(model = map(data, Fit_model))
 
 # Create a function to select the desired coefficient
-SelectCoef <- function(fit){
+Select_coef <- function(fit){
   coefficients(fit)["young_driverTRUE"]
 }
 
 # Add the young_driver effect as a variable in the data set
 result <- result %>%
-  mutate(effect_young_driver = map_dbl(model, SelectCoef))
+  mutate(effect_young_driver = map_dbl(model, Select_coef))
 
 # Show only the columns utilisation and effect_young_driver
 result %>% select(utilisation, effect_young_driver)
@@ -130,6 +130,6 @@ policy_data %>%
   group_by(utilisation) %>% # split by utilisation
   nest() %>%
   mutate(model = map(data, Fit_model)) %>%
-  mutate(effect_young_driver = map_dbl(model, SelectCoef)) %>%
+  mutate(effect_young_driver = map_dbl(model, Select_coef)) %>%
   select(utilisation, effect_young_driver)
 

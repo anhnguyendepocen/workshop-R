@@ -1584,12 +1584,12 @@ result &lt;- nested_data %&gt;%
 Select the young driver effect from the model.
 
 ```r
-SelectCoef &lt;- function(fit){
+Select_coef &lt;- function(fit){
   coefficients(fit)["young_driverTRUE"]
 }
 
 result &lt;- result %&gt;% 
-  mutate(effect_young_driver = map_dbl(model, SelectCoef))
+  mutate(effect_young_driver = map_dbl(model, Select_coef))
 ```
 
 ---
@@ -2031,7 +2031,7 @@ end_time - start_time
 ```
 
 ```
-## Time difference of 0.584002 secs
+## Time difference of 0.459038 secs
 ```
 Use `Sys.time()` to measure the elapsed time between two steps of the program and detect efficiency bottlenecks.
 ]
